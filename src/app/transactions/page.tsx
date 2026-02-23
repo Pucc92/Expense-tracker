@@ -12,7 +12,7 @@ export default function TransactionsPage() {
       <h1 className="text-2xl font-semibold">Transactions</h1>
       <div className="rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-600">
             <tr className="text-left">
               <th className="p-3">Date</th>
               <th className="p-3">Description</th>
