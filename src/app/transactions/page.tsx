@@ -1,12 +1,9 @@
-import { mockTransactions } from "@/lib/mock/mockTransactions";
-import { mockCategories } from "@/lib/mock/mockCategories";
+import { getCategoryName } from "@/features/categories/category.utils";
 import { formatMoney } from "@/domain/money";
-
-function getCategoryName(categoryId: string): string {
-  return mockCategories.find((c) => c.id === categoryId)?.name ?? "—";
-}
+import { listTransactions } from "@/features/transactions/transactions.repository";
 
 export default function TransactionsPage() {
+  const transactions = listTransactions();
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">Transactions</h1>
@@ -21,7 +18,7 @@ export default function TransactionsPage() {
             </tr>
           </thead>
           <tbody>
-            {mockTransactions.map((t) => (
+            {transactions.map((t) => (
               <tr key={t.id} className="border-t">
                 <td className="p-3">{t.date}</td>
                 <td className="p-3">{t.description}</td>
@@ -32,7 +29,7 @@ export default function TransactionsPage() {
           </tbody>
         </table>
       </div>
-      {mockTransactions.length === 0 && (
+      {transactions.length === 0 && (
         <p className="text-center text-gray-500">No transactions found.</p>
       )}
     </div>
