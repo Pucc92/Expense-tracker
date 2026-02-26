@@ -1,13 +1,29 @@
+"use client";
+import { useState } from "react";
 import { getCategoryName } from "@/features/categories/category.utils";
 import { formatMoney } from "@/domain/money";
-import { listTransactions } from "@/features/transactions/transactions.repository";
+import type { Transaction } from "@/domain/transaction";
+import { TransactionForm } from "@/features/transactions/TransactionForm";
+import {
+  addTransaction,
+  listTransactions,
+} from "@/features/transactions/transactions.repository";
 
 export default function TransactionsPage() {
-  const transactions = listTransactions();
+  const [transactions, setTransactions] = useState<Transaction[]>(() =>
+    listTransactions(),
+  );
+
+  function handleCreate(tx: Transaction) {
+    addTransaction(tx); // aggiorna “storage” in memory
+    setTransactions(listTransactions()); // ricarica nello state
+  }
+
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">Transactions</h1>
       <div className="rounded-lg border border-gray-200 overflow-hidden">
+        <TransactionForm onCreate={handleCreate} />
         <table className="w-full text-sm">
           <thead className="bg-gray-600">
             <tr className="text-left">
