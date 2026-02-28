@@ -104,7 +104,7 @@ export function TransactionForm({ onCreate }: Props) {
             onChange={(e) => setCategoryId(e.target.value)}
           >
             {mockCategories.map((c) => (
-              <option key={c.id} value={c.id}>
+              <option className="text-black" key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
