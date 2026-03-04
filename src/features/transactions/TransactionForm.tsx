@@ -5,7 +5,8 @@ import { parseMoney } from "@/domain/money";
 import { createId } from "@/domain/ids";
 import type { Transaction } from "@/domain/transaction";
 import { mockCategories } from "@/lib/mock/mockCategories";
-
+import type { TransactionInput } from "@/features/transactions/transaction.input";
+import { transactionInputSchema } from "@/features/transactions/transaction.schema";
 type Props = {
   onCreate: (tx: Transaction) => void;
 };
@@ -23,31 +24,41 @@ export function TransactionForm({ onCreate }: Props) {
     e.preventDefault();
     setError(null);
 
-    // VALIDAZIONE BASE (semplice oggi)
-    if (!date) return setError("Inserisci una data");
-    if (description.trim().length < 2)
-      return setError("Descrizione troppo corta");
-    if (!categoryId) return setError("Scegli una categoria");
-    if (!amount.trim()) return setError("Inserisci un importo");
+    const input: TransactionInput = {
+      date,
+      description,
+      categoryId,
+      amount,
+    };
+
+    const result = transactionInputSchema.safeParse(input);
+
+    if (!result.success) {
+      const firstIssue = result.error.issues[0];
+      setError(firstIssue?.message ?? "Input non valido");
+      return;
+    }
 
     let money;
     try {
-      money = parseMoney(amount);
+      money = parseMoney(result.data.amount);
     } catch {
-      return setError("Importo non valido (es: 12,34)");
+      setError("Importo non valido (es: 12,34)");
+      return;
     }
 
     const tx: Transaction = {
       id: createId("tx"),
-      date,
-      description: description.trim(),
-      categoryId,
+      date: result.data.date,
+      description: result.data.description,
+      categoryId: result.data.categoryId,
       money,
     };
 
     onCreate(tx);
 
     // reset form
+    setCategoryId(mockCategories[0]?.id ?? "");
     setDate("");
     setDescription("");
     setAmount("");
